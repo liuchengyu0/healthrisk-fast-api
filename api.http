@@ -1,0 +1,11 @@
+### 測試 GET API
+GET http://127.0.0.1:8000/
+
+### 測試 POST API（如果有）
+POST http://127.0.0.1:8000/items
+Content-Type: application/json
+
+{
+  "name": "測試商品",
+  "price": 100
+}

@@ -23,8 +23,6 @@ model = joblib.load("bst.pkl")
 
 #定義數據模型
 class PredictionData(BaseModel):
-    name:str
-    date:str
     gender: str #女/男->0/1
     age: int
     height: int

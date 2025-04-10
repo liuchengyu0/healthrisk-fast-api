@@ -10,19 +10,12 @@ import json
 #初始化API
 app = FastAPI()
 
-origins = [
-    "http://localhost:3000",    # React 開發環境
-    "http://127.0.0.1:3000",    # 另一個常見本地測試
-    "http://192.168.56.1:3000"  # 如果你的前端在此 IP 運行
-]
-
-# 允許所有來源的請求
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://140.136.44.57:3000/"],  # 允許所有域名的跨來源請求
+    allow_origins=origins,  # ←這樣才能涵蓋所有前端來源
     allow_credentials=True,
-    allow_methods=["*"],  # 允許所有 HTTP 方法
-    allow_headers=["*"],  # 允許所有標頭
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # 載入訓練好的模型
@@ -98,7 +91,7 @@ def open_browser():
     import time
     time.sleep(1)  # 等待 1 秒，確保伺服器已啟動
     #webbrowser.open("http://127.0.0.1:8000")
-    webbrowser.open("https://hxwklx.csb.app/test")
+    #webbrowser.open("https://hxwklx.csb.app/test")
 
 if __name__ == "__main__":
     print("Welcome to the Health Risk Prediction API!")

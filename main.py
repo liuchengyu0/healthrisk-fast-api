@@ -49,6 +49,11 @@ def preprocess_data(data: PredictionData):
     diabetes_mapping = {"無": 0, "有": 1}
     bloodpressure_mapping = {"無": 0, "有": 1}
 
+    # 自動計算 BMI（身高公分轉成公尺）
+    height_m = data.height / 100
+    bmi = data.weight / (height_m ** 2)
+    print(f"計算出的 BMI: {bmi:.2f}")
+
     processed_features = [
         gender_mapping.get(data.gender, -1),  # 預設 -1 表示無效數據
         data.age,

@@ -12,7 +12,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # ←這樣才能涵蓋所有前端來源
+    allow_origins=["http://140.136.27.134:3000"],  # ←這樣才能涵蓋所有前端來源
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -66,9 +66,9 @@ def preprocess_data(data: PredictionData):
 @app.post("/predict")
 async def predict(data: PredictionData):
     # 儲存前端傳來的資料到檔案，方便檢查
-    with open("request_data.json", "w", encoding="utf-8") as f:
-        json.dump(data.dict(), f, ensure_ascii=False, indent=4)
-    
+    #with open("request_data.json", "w", encoding="utf-8") as f:
+        #json.dump(data.dict(), f, ensure_ascii=False, indent=4)
+
     features = preprocess_data(data) #處理輸入數據
     prediction = model.predict_proba(features)[:, 1]  # 取正類別 (1) 的機率值
     print(model.predict_proba(features))
@@ -95,6 +95,6 @@ def open_browser():
 if __name__ == "__main__":
     print("Welcome to the Health Risk Prediction API!")
     threading.Thread(target=open_browser).start()
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=8000)
 
 

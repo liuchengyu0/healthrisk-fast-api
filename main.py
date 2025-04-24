@@ -12,7 +12,7 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://140.136.27.134:3000"],  # ←這樣才能涵蓋所有前端來源
+    allow_origins=["*"],  # ←這樣才能涵蓋所有前端來源
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

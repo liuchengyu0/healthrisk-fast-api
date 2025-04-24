@@ -65,7 +65,7 @@ def preprocess_data(data: PredictionData):
         bloodpressure_mapping.get(data.bloodpressure, -1),
     ]
 
-    return [processed_features]  # 轉為 2D 陣列，符合模型輸入格式
+    return [processed_features],bmi  # 轉為 2D 陣列，符合模型輸入格式
 
 # 把接收到的資料傳遞給模型進行預測
 @app.post("/predict")
@@ -73,7 +73,7 @@ async def predict(data: PredictionData):
     # 儲存前端傳來的資料到檔案，方便檢查
     #with open("request_data.json", "w", encoding="utf-8") as f:
         #json.dump(data.dict(), f, ensure_ascii=False, indent=4)
-
+    
     features, bmi = preprocess_data(data)  # 處理輸入數據並取得 BMI
     features = preprocess_data(data) #處理輸入數據
     prediction = model.predict_proba(features)[:, 1]  # 取正類別 (1) 的機率值
@@ -82,7 +82,7 @@ async def predict(data: PredictionData):
     # 轉換預測結果 (假設模型輸出的是 0~1 之間的機率，轉為百分比)
     risk_score = float(prediction[0] * 100)
 
-    return {"risk_score": risk_score,"BMI": f"{bmi:.2f}"}  # 轉換為JSON可讀格式
+    return {"risk_score": risk_score,"BMI": f"{bmi}"}  # 轉換為JSON可讀格式
 
 
 

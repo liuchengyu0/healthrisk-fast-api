@@ -65,7 +65,7 @@ def preprocess_data(data: PredictionData):
         bloodpressure_mapping.get(data.bloodpressure, -1),
     ]
 
-    return [processed_features],bmi  # 轉為 2D 陣列，符合模型輸入格式
+    return [processed_features]  # 轉為 2D 陣列，符合模型輸入格式
 
 # 把接收到的資料傳遞給模型進行預測
 @app.post("/predict")

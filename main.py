@@ -8,7 +8,10 @@ import joblib
 import json
 
 #初始化API
-app = FastAPI()
+app = FastAPI(
+    title="健康風險預測API",
+    description="這是一個用來計算大腸息肉風險的API。"
+    )
 
 app.add_middleware(
     CORSMiddleware,
@@ -86,10 +89,10 @@ async def predict(data: PredictionData):
 
 
 
-# 處理 favicon 請求
-@app.get("/favicon.ico")
-async def favicon():
-    return {"favicon set coming soon"}
+# 根據網址上的 item_id 參數，回傳相應的資料
+@app.get("/items/{item_id}")
+async def read_item(item_id:int):
+    return {"item_id":item_id}
 
 def open_browser():
     """等伺服器啟動後，打開瀏覽器"""

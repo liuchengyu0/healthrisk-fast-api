@@ -1,11 +1,14 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi import Header, HTTPException
 import uvicorn
 import webbrowser
 import threading
 import joblib
 import json
+
+API_KEY = "healthriskapikey"  # 自訂API key
 
 #初始化API
 app = FastAPI(
@@ -72,13 +75,14 @@ def preprocess_data(data: PredictionData):
 
 # 把接收到的資料傳遞給模型進行預測
 @app.post("/predict")
-async def predict(data: PredictionData):
-    # 儲存前端傳來的資料到檔案，方便檢查
-    #with open("request_data.json", "w", encoding="utf-8") as f:
-        #json.dump(data.dict(), f, ensure_ascii=False, indent=4)
+async def predict(
+    data: PredictionData,
+    x_api_key: str = Header(None)
+):
+    if x_api_key != API_KEY:
+        raise HTTPException(status_code=401, detail="Unauthorized")
     
     features, bmi = preprocess_data(data)  # 處理輸入數據並取得 BMI
-    #features = preprocess_data(data) #處理輸入數據
     prediction = model.predict_proba(features)[:, 1]  # 取正類別 (1) 的機率值
     print(model.predict_proba(features))
     print(f"回傳數據: {prediction[0]}")
@@ -98,8 +102,6 @@ def open_browser():
     """等伺服器啟動後，打開瀏覽器"""
     import time
     time.sleep(1)  # 等待 1 秒，確保伺服器已啟動
-    #webbrowser.open("http://127.0.0.1:8000")
-    #webbrowser.open("https://hxwklx.csb.app/test")
 
 if __name__ == "__main__":
     print("Welcome to the Health Risk Prediction API!")

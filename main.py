@@ -55,10 +55,9 @@ def preprocess_data(data: PredictionData):
     diabetes_mapping = {"無": 0, "有": 1}
     bloodpressure_mapping = {"無": 0, "有": 1}
 
-    # 自動計算 BMI（身高公分轉成公尺）
+    # 計算 BMI
     height_m = data.height / 100
     bmi = data.weight / (height_m ** 2)
-    print(f"計算出的 BMI: {bmi:.2f}")
 
     processed_features = [
         gender_mapping.get(data.gender, -1),  # 預設 -1 表示無效數據
@@ -81,8 +80,11 @@ async def predict(
 ):
     if x_api_key != API_KEY:
         raise HTTPException(status_code=401, detail="Unauthorized")
-    
-    features, bmi = preprocess_data(data)  # 處理輸入數據並取得 BMI
+    try:
+        features, bmi = preprocess_data(data)  # 處理輸入數據並取得 BMI
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=f"Invalid data: {str(e)}")
+    #告訴用戶哪一個欄位錯誤。
     prediction = model.predict_proba(features)[:, 1]  # 取正類別 (1) 的機率值
     print(model.predict_proba(features))
     print(f"回傳數據: {prediction[0]}")

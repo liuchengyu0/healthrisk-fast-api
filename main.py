@@ -7,6 +7,7 @@ import webbrowser
 import threading
 import joblib
 import json
+import logging
 
 API_KEY = "healthriskapikey"  # 自訂API key
 
@@ -72,6 +73,8 @@ def preprocess_data(data: PredictionData):
 
     return [processed_features],bmi  # 轉為 2D 陣列，符合模型輸入格式
 
+logger = logging.getLogger("uvicorn")
+
 # 把接收到的資料傳遞給模型進行預測
 @app.post("/predict")
 async def predict(
@@ -85,6 +88,9 @@ async def predict(
     except ValueError as e:
         raise HTTPException(status_code=400, detail=f"Invalid data: {str(e)}")
     #告訴用戶哪一個欄位錯誤。
+    
+    logger.info(f"前端送來的資料: {data.dict()}")
+    logger.info(f"API KEY: {x_api_key}")
     prediction = model.predict_proba(features)[:, 1]  # 取正類別 (1) 的機率值
     print(model.predict_proba(features))
     print(f"回傳數據: {prediction[0]}")

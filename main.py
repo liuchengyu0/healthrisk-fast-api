@@ -26,7 +26,7 @@ app.add_middleware(
 )
 
 # 載入訓練好的模型
-model = joblib.load("bst.pkl")
+model = joblib.load("stacking_model.pkl")
 
 #定義數據模型
 class PredictionData(BaseModel):
@@ -35,10 +35,17 @@ class PredictionData(BaseModel):
     age: int
     height: int
     weight: int
-    bloodsugar: int
-    cholesterol: int
-    diabetes: str # 無/有 -> 0/1
-    bloodpressure: str # 無/有 -> 0/1
+    bloodsugar: int #血糖
+    cholesterol: int #膽固醇
+    diabetes: str # 無/有 -> 0/1，糖尿病
+    bloodpressure: str # 無/有 -> 0/1，高血壓
+    cea: int  # 癌胚胎抗原
+    waist: int  # 腰圍
+    triglyceride: int  # 三酸甘油脂
+    bun: int  # 尿素氮
+    fatty_liver: str  # 無/有 -> 0/1，脂肪肝
+    erosion: str  # 無/有 -> 0/1，糜爛
+    smoking: str  # 無/有 -> 0/1，菸
 
 # 手動處理 OPTIONS 請求
 @app.options("/predict")
@@ -55,6 +62,9 @@ def preprocess_data(data: PredictionData):
     gender_mapping = {"女": 0, "男": 1}
     diabetes_mapping = {"無": 0, "有": 1}
     bloodpressure_mapping = {"無": 0, "有": 1}
+    fatty_liver_mapping = {"無": 0, "有": 1}
+    erosion_mapping = {"無": 0, "有": 1}
+    smoking_mapping = {"無": 0, "有": 1}
 
     # 計算 BMI
     height_m = data.height / 100
@@ -69,6 +79,13 @@ def preprocess_data(data: PredictionData):
         data.cholesterol,
         diabetes_mapping.get(data.diabetes, -1),
         bloodpressure_mapping.get(data.bloodpressure, -1),
+        data.cea,
+        data.waist,
+        data.triglyceride,
+        data.bun,
+        fatty_liver_mapping.get(data.fatty_liver, -1),
+        erosion_mapping.get(data.erosion, -1),
+        smoking_mapping.get(data.smoking, -1),
     ]
 
     return [processed_features],bmi  # 轉為 2D 陣列，符合模型輸入格式

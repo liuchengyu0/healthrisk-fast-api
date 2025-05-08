@@ -26,7 +26,7 @@ app.add_middleware(
 )
 
 # 載入訓練好的模型
-model = joblib.load("stacking_model.pkl")
+model = joblib.load("bst.pkl")
 
 #定義數據模型
 class PredictionData(BaseModel):

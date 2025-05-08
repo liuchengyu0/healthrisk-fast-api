@@ -73,7 +73,7 @@ def preprocess_data(data: PredictionData):
     processed_features = [
         gender_mapping.get(data.gender, -1),  # 預設 -1 表示無效數據
         data.age,
-        data.height,
+        #data.height,
         data.weight,
         data.bloodsugar,
         data.cholesterol,

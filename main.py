@@ -61,8 +61,8 @@ def preprocess_data(data: PredictionData):
     gender_mapping = {"女": 0, "男": 1}
     diabetes_mapping = {"無": 0, "有": 1}
     bloodpressure_mapping = {"無": 0, "有": 1}
-    fatty_liver_mapping = {"無": 0, "有": 1}
-    erosion_mapping = {"無": 0, "有": 1}
+    fatty_liver_mapping = {"無": 0,"不知道": 0, "有": 1}
+    erosion_mapping = {"無": 0,"不知道": 0, "有": 1}
     smoking_mapping = {"無": 0, "有": 1}
 
     # 計算 BMI

@@ -36,15 +36,14 @@ class PredictionData(BaseModel):
     weight: float
     bloodsugar: float #血糖
     cholesterol: float #膽固醇
-    diabetes: str # 無/有 -> 0/1，糖尿病
     bloodpressure: str # 無/有 -> 0/1，高血壓
-    cea: float  # 癌胚胎抗原
     waist: float  # 腰圍
     triglyceride: float  # 三酸甘油脂
     bun: float  # 尿素氮
-    fatty_liver: str  # 無/有 -> 0/1，脂肪肝
-    erosion: str  # 無/有 -> 0/1，糜爛
+    fatty_liver: str  # 無/不知道/有 -> 0/0/1，脂肪肝
     smoking: str  # 無/有 -> 0/1，菸
+    hermatin:float#血色素
+    ua:float#尿酸
 
 # 手動處理 OPTIONS 請求
 @app.options("/predict")
@@ -59,10 +58,8 @@ async def root():
 # 類別數據轉換函數
 def preprocess_data(data: PredictionData):
     gender_mapping = {"女": 0, "男": 1}
-    diabetes_mapping = {"無": 0, "有": 1}
     bloodpressure_mapping = {"無": 0, "有": 1}
     fatty_liver_mapping = {"無": 0,"不知道": 0, "有": 1}
-    erosion_mapping = {"無": 0,"不知道": 0, "有": 1}
     smoking_mapping = {"無": 0, "有": 1}
 
     # 計算 BMI
@@ -72,18 +69,17 @@ def preprocess_data(data: PredictionData):
     processed_features = [
         gender_mapping.get(data.gender, -1),  # 預設 -1 表示無效數據
         data.age,
-        data.weight,
+        bmi,
         data.bloodsugar,
         data.cholesterol,
-        diabetes_mapping.get(data.diabetes, -1),
         bloodpressure_mapping.get(data.bloodpressure, -1),
-        data.cea,
         data.waist,
         data.triglyceride,
         data.bun,
         fatty_liver_mapping.get(data.fatty_liver, -1),
-        erosion_mapping.get(data.erosion, -1),
         smoking_mapping.get(data.smoking, -1),
+        data.hermatin,
+        data.ua
     ]
 
     return [processed_features],bmi  # 轉為 2D 陣列，符合模型輸入格式

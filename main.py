@@ -30,19 +30,18 @@ model = joblib.load("bst.pkl")
 
 #定義數據模型
 class PredictionData(BaseModel):
-    name: str
     gender: str #女/男->0/1
     age: int
-    height: int
-    weight: int
-    bloodsugar: int #血糖
-    cholesterol: int #膽固醇
+    height: float
+    weight: float
+    bloodsugar: float #血糖
+    cholesterol: float #膽固醇
     diabetes: str # 無/有 -> 0/1，糖尿病
     bloodpressure: str # 無/有 -> 0/1，高血壓
-    cea: int  # 癌胚胎抗原
-    waist: int  # 腰圍
-    triglyceride: int  # 三酸甘油脂
-    bun: int  # 尿素氮
+    cea: float  # 癌胚胎抗原
+    waist: float  # 腰圍
+    triglyceride: float  # 三酸甘油脂
+    bun: float  # 尿素氮
     fatty_liver: str  # 無/有 -> 0/1，脂肪肝
     erosion: str  # 無/有 -> 0/1，糜爛
     smoking: str  # 無/有 -> 0/1，菸
@@ -73,7 +72,6 @@ def preprocess_data(data: PredictionData):
     processed_features = [
         gender_mapping.get(data.gender, -1),  # 預設 -1 表示無效數據
         data.age,
-        #data.height,
         data.weight,
         data.bloodsugar,
         data.cholesterol,

@@ -8,6 +8,7 @@ import threading
 import joblib
 import json
 import logging
+from pydantic import BaseModel, Field
 
 API_KEY = "healthriskapikey"  # 自訂API key
 
@@ -30,20 +31,20 @@ model = joblib.load("bst.pkl")
 
 #定義數據模型
 class PredictionData(BaseModel):
-    gender: str #女/男->0/1
-    age: int
-    height: float
-    weight: float
-    bloodsugar: float #血糖
-    cholesterol: float #膽固醇
-    bloodpressure: str # 無/有 -> 0/1，高血壓
-    waist: float  # 腰圍
-    triglyceride: float  # 三酸甘油脂
-    bun: float  # 尿素氮
-    fatty_liver: str  # 無/不知道/有 -> 0/0/1，脂肪肝
-    smoking: str  # 無/有 -> 0/1，菸
-    hermatin:float#血色素
-    ua:float#尿酸
+    gender: str =Field(...,description="性別:女或男")#女/男->0/1
+    age: int =Field(...,description="年齡(歲)")
+    height: float =Field(...,description="身高(公分)")
+    weight: float =Field(...,description="體重(公斤)")
+    bloodsugar: float =Field(...,description="血糖(mg/dl)")#血糖
+    cholesterol: float =Field(...,description="膽固醇(mg/dl)")#膽固醇
+    bloodpressure: str =Field(...,description="是否有高血壓:無或有")# 無/有 -> 0/1，高血壓
+    waist: float  =Field(...,description="腰圍(公分)")# 腰圍
+    triglyceride: float  =Field(...,description="三酸甘油脂(mg/dl)")# 三酸甘油脂
+    bun: float  =Field(...,description="尿素氮(mg/dl)")# 尿素氮
+    fatty_liver: str  =Field(...,description="是否有脂肪肝:無、不知道、有")# 無/不知道/有 -> 0/0/1，脂肪肝
+    smoking: str  =Field(...,description="是否有吸菸習慣:無或有")# 無/有 -> 0/1，菸
+    hermatin:float =Field(...,description="血色素(g/dl)")#血色素
+    ua:float =Field(...,description="尿酸(mg/dl)")#尿酸
 
 # 手動處理 OPTIONS 請求
 @app.options("/predict")

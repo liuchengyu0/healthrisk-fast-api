@@ -103,17 +103,17 @@ async def predict(
     logger.info(f"前端送來的資料: {data.dict()}")
     logger.info(f"API KEY: {x_api_key}")
     #prediction = model.predict(features)
-    prediction = model.predict_proba(features)[:, 1]  # 取正類別 (1) 的機率值
+    proba = model.predict_proba(features)[:, 1]  # 取正類別 (1) 的機率值
 
-    print(model.predict(features))
-    print(f"回傳數據: {prediction[0]}")
+    print(f"回傳數據: {proba}")
+    #自訂 threshold，例如 0.7
+    threshold = 0.7
+    prediction = (proba >= threshold).astype(int)
+    print(f"使用 threshold = {threshold} 預測結果: {prediction}")
     # 轉換預測結果 (假設模型輸出的是 0~1 之間的機率，轉為百分比)
-    risk_score = float(prediction[0] * 100)
-    risk_score = prediction[0]
-    #risk_score = int(prediction[0])  # 轉成整數，避免是 numpy.int64
-    return {"risk": risk_score, "BMI": f"{bmi:.2f}"}
-
-    #return {"risk_score": risk_score,"BMI": f"{bmi:.2f}"}  # 轉換為JSON可讀格式
+    #risk_score = float(prediction[0] * 100)
+    risk_score = int(prediction[0])# 轉成整數，避免是 numpy.int64
+    return {"risk": risk_score, "BMI": f"{bmi:.2f}"}# 轉換為JSON可讀格式
 
 
 

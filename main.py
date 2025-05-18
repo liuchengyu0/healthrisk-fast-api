@@ -3,10 +3,8 @@ from pydantic import BaseModel
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi import Header, HTTPException
 import uvicorn
-import webbrowser
 import threading
 import joblib
-import json
 import logging
 from pydantic import BaseModel, Field
 
@@ -20,7 +18,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # ←這樣才能涵蓋所有前端來源
+    allow_origins=["*"],  #涵蓋所有前端來源
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -68,7 +66,7 @@ def preprocess_data(data: PredictionData):
     bmi = data.weight / (height_m ** 2)
 
     processed_features = [
-        gender_mapping.get(data.gender, -1),  # 預設 -1 表示無效數據
+        gender_mapping.get(data.gender, -1),  # 預設-1表示無效數據
         data.age,
         bmi,
         data.bloodsugar,
@@ -82,7 +80,6 @@ def preprocess_data(data: PredictionData):
         data.hermatin,
         data.ua
     ]
-
     return [processed_features],bmi  # 轉為 2D 陣列，符合模型輸入格式
 
 logger = logging.getLogger("uvicorn")
@@ -96,27 +93,20 @@ async def predict(
     if x_api_key != API_KEY:
         raise HTTPException(status_code=401, detail="Unauthorized")
     try:
-        features, bmi = preprocess_data(data)  # 處理輸入數據並取得 BMI
+        features, bmi = preprocess_data(data)  #處理輸入數據並取得 BMI
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=f"Invalid data: {str(e)}")
-    #告訴用戶哪一個欄位錯誤。
+        raise HTTPException(status_code=400, detail=f"Invalid data: {str(e)}") #告訴用戶哪一個欄位錯誤。
     
     logger.info(f"前端送來的資料: {data.dict()}")
     logger.info(f"API KEY: {x_api_key}")
-    #prediction = model.predict(features)
-    proba = model.predict_proba(features)[:, 1]  # 取正類別 (1) 的機率值
+    proba = model.predict_proba(features)[:, 1]  # 取正類別 (1) 的值
 
     print(f"回傳數據: {proba}")
-    #自訂 threshold，例如 0.7
-    threshold = 0.7
+    threshold = 0.7 #自訂 threshold，例如 0.7
     prediction = (proba >= threshold).astype(int)
     print(f"使用 threshold = {threshold} 預測結果: {prediction}")
-    # 轉換預測結果 (假設模型輸出的是 0~1 之間的機率，轉為百分比)
-    #risk_score = float(prediction[0] * 100)
     risk_score = int(prediction[0])# 轉成整數，避免是 numpy.int64
     return {"risk": risk_score, "BMI": f"{bmi:.2f}"}# 轉換為JSON可讀格式
-
-
 
 # 根據網址上的 item_id 參數，回傳相應的資料
 @app.get("/items/{item_id}")
@@ -132,5 +122,3 @@ if __name__ == "__main__":
     print("Welcome to the Health Risk Prediction API!")
     threading.Thread(target=open_browser).start()
     uvicorn.run("main:app", host="0.0.0.0", port=8000)
-
-

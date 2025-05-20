@@ -30,19 +30,20 @@ model = joblib.load("bst.pkl")
 #定義數據模型
 class PredictionData(BaseModel):
     gender: str =Field(...,description="性別:女或男")#女/男->0/1
-    age: int =Field(...,description="年齡(歲)")
-    height: float =Field(...,description="身高(公分)")
-    weight: float =Field(...,description="體重(公斤)")
-    bloodsugar: float =Field(...,description="血糖(mg/dl)")#血糖
-    cholesterol: float =Field(...,description="膽固醇(mg/dl)")#膽固醇
-    bloodpressure: str =Field(...,description="是否有高血壓:無或有")# 無/有 -> 0/1，高血壓
+    age: int =Field(...,description="年齡(歲、years)")
+    height: float =Field(...,description="身高(公分、cm)")
+    weight: float =Field(...,description="體重(公斤、kg)")
+    bloodsugar: float =Field(...,description="空腹血糖(mg/dL)")#血糖
+    cholesterol: float =Field(...,description="高密度脂蛋白膽固醇(mg/dL)")#高密度脂蛋白膽固醇
+    rgt: float =Field(...,description="麩氨轉酸酵素(U/L)")# 麩氨轉酸酵素
     waist: float  =Field(...,description="腰圍(公分)")# 腰圍
-    triglyceride: float  =Field(...,description="三酸甘油脂(mg/dl)")# 三酸甘油脂
+    triglyceride: float  =Field(...,description="三酸甘油脂(mg/dL)")# 三酸甘油脂
     bun: float  =Field(...,description="尿素氮(mg/dl)")# 尿素氮
     fatty_liver: str  =Field(...,description="是否有脂肪肝:無、不知道、有")# 無/不知道/有 -> 0/0/1，脂肪肝
-    smoking: str  =Field(...,description="是否有吸菸習慣:無或有")# 無/有 -> 0/1，菸
-    hermatin:float =Field(...,description="血色素(g/dl)")#血色素
-    ua:float =Field(...,description="尿酸(mg/dl)")#尿酸
+    alt: float  =Field(...,description="麩氨酸丙酮酸轉氨基酵素(U/L)")#麩氨酸丙酮酸轉氨基酵素
+    hermatin:float =Field(...,description="血色素(g/dL)")#血色素
+    ua:float =Field(...,description="尿酸(mg/dL)")#尿酸
+    cr:float =Field(...,description="肌氨酸酐(mg/dL)")#肌氨酸酐
 
 # 手動處理 OPTIONS 請求
 @app.options("/predict")
@@ -57,9 +58,7 @@ async def root():
 # 類別數據轉換函數
 def preprocess_data(data: PredictionData):
     gender_mapping = {"女": 0, "男": 1}
-    bloodpressure_mapping = {"無": 0, "有": 1}
     fatty_liver_mapping = {"無": 0,"不知道": 0, "有": 1}
-    smoking_mapping = {"無": 0, "有": 1}
 
     # 計算 BMI
     height_m = data.height / 100
@@ -71,14 +70,15 @@ def preprocess_data(data: PredictionData):
         bmi,
         data.bloodsugar,
         data.cholesterol,
-        bloodpressure_mapping.get(data.bloodpressure, -1),
+        data.rgt,
         data.waist,
         data.triglyceride,
         data.bun,
         fatty_liver_mapping.get(data.fatty_liver, -1),
-        smoking_mapping.get(data.smoking, -1),
+        data.alt,
         data.hermatin,
-        data.ua
+        data.ua,
+        data.cr
     ]
     return [processed_features],bmi  # 轉為 2D 陣列，符合模型輸入格式
 

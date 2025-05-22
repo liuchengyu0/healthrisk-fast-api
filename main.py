@@ -54,7 +54,6 @@ async def root():
 # 類別數據轉換函數
 def preprocess_data(data: PredictionData):
     gender_mapping = {"女": 0, "男": 1}
-    fatty_liver_mapping = {"無": 0,"不知道": 0, "有": 1}
 
     # 計算 BMI
     height_m = data.height / 100

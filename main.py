@@ -33,17 +33,15 @@ class PredictionData(BaseModel):
     age: int =Field(...,description="年齡(歲、years)")
     height: float =Field(...,description="身高(公分、cm)")
     weight: float =Field(...,description="體重(公斤、kg)")
-    bloodsugar: float =Field(...,description="空腹血糖(mg/dL)")#血糖
+    bloodsugar: float =Field(...,description="空腹血糖(mg/dL)")#空腹血糖
     cholesterol: float =Field(...,description="高密度脂蛋白膽固醇(mg/dL)")#高密度脂蛋白膽固醇
     rgt: float =Field(...,description="麩氨轉酸酵素(U/L)")# 麩氨轉酸酵素
     waist: float  =Field(...,description="腰圍(公分)")# 腰圍
     triglyceride: float  =Field(...,description="三酸甘油脂(mg/dL)")# 三酸甘油脂
     bun: float  =Field(...,description="尿素氮(mg/dl)")# 尿素氮
     fatty_liver: str  =Field(...,description="是否有脂肪肝:無、不知道、有")# 無/不知道/有 -> 0/0/1，脂肪肝
-    alt: float  =Field(...,description="麩氨酸丙酮酸轉氨基酵素(U/L)")#麩氨酸丙酮酸轉氨基酵素
     hermatin:float =Field(...,description="血色素(g/dL)")#血色素
-    ua:float =Field(...,description="尿酸(mg/dL)")#尿酸
-    cr:float =Field(...,description="肌氨酸酐(mg/dL)")#肌氨酸酐
+    hct:float =Field(...,description="血球比容(%)")#血球比容
 
 # 手動處理 OPTIONS 請求
 @app.options("/predict")
@@ -75,10 +73,9 @@ def preprocess_data(data: PredictionData):
         data.triglyceride,
         data.bun,
         fatty_liver_mapping.get(data.fatty_liver, -1),
-        data.alt,
         data.hermatin,
-        data.ua,
-        data.cr
+        data.hct,
+        data.weight
     ]
     return [processed_features],bmi  # 轉為 2D 陣列，符合模型輸入格式
 
@@ -102,7 +99,7 @@ async def predict(
     proba = model.predict_proba(features)[:, 1]  # 取正類別 (1) 的值
 
     print(f"回傳數據: {proba}")
-    threshold = 0.65 #自訂 threshold，例如 0.7
+    threshold = 0.65 #自訂 threshold
     prediction = (proba >= threshold).astype(int)
     print(f"使用 threshold = {threshold} 預測結果: {prediction}")
     risk_score = int(prediction[0])# 轉成整數，避免是 numpy.int64

@@ -34,12 +34,10 @@ class PredictionData(BaseModel):
     height: float =Field(...,description="身高(公分、cm)")
     weight: float =Field(...,description="體重(公斤、kg)")
     bloodsugar: float =Field(...,description="空腹血糖(mg/dL)")#空腹血糖
-    cholesterol: float =Field(...,description="高密度脂蛋白膽固醇(mg/dL)")#高密度脂蛋白膽固醇
     rgt: float =Field(...,description="麩氨轉酸酵素(U/L)")# 麩氨轉酸酵素
     waist: float  =Field(...,description="腰圍(公分)")# 腰圍
     triglyceride: float  =Field(...,description="三酸甘油脂(mg/dL)")# 三酸甘油脂
     bun: float  =Field(...,description="尿素氮(mg/dl)")# 尿素氮
-    fatty_liver: str  =Field(...,description="是否有脂肪肝:無、不知道、有")# 無/不知道/有 -> 0/0/1，脂肪肝
     hermatin:float =Field(...,description="血色素(g/dL)")#血色素
     hct:float =Field(...,description="血球比容(%)")#血球比容
 
@@ -67,12 +65,10 @@ def preprocess_data(data: PredictionData):
         data.age,
         bmi,
         data.bloodsugar,
-        data.cholesterol,
         data.rgt,
         data.waist,
         data.triglyceride,
         data.bun,
-        fatty_liver_mapping.get(data.fatty_liver, -1),
         data.hermatin,
         data.hct,
         data.weight

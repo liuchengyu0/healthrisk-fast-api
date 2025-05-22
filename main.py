@@ -94,7 +94,7 @@ async def predict(
     proba = model.predict_proba(features)[:, 1]  # 取正類別 (1) 的值
 
     print(f"回傳數據: {proba}")
-    threshold = 0.65 #自訂 threshold
+    threshold = 0.5 #自訂 threshold
     prediction = (proba >= threshold).astype(int)
     print(f"使用 threshold = {threshold} 預測結果: {prediction}")
     risk_score = int(prediction[0])# 轉成整數，避免是 numpy.int64

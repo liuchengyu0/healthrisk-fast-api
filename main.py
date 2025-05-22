@@ -75,11 +75,11 @@ def preprocess_data(data: PredictionData):
         data.bun,
         data.hermatin,
         data.hct,
-        data.weight
+        data.weight,
         fattyliver_mapping.get(data.fattyliver, -1),  # 預設-1表示無效數據
         data.alt,
         data.rbc,
-        data.hdl,
+        data.hdl
     ]
     return [processed_features],bmi  # 轉為 2D 陣列，符合模型輸入格式
 

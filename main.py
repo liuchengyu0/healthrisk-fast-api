@@ -39,9 +39,7 @@ class PredictionData(BaseModel):
     triglyceride: float  =Field(...,description="三酸甘油脂(mg/dL)")# 三酸甘油脂
     bun: float  =Field(...,description="尿素氮(mg/dl)")# 尿素氮
     hermatin:float =Field(...,description="血色素(g/dL)")#血色素
-    hct:float =Field(...,description="血球比容(%)")#血球比容
     alt:float =Field(...,description="麩氨酸丙酮酸轉氨基酵素")#麩氨酸丙酮酸轉氨基酵素
-    rbc:float =Field(...,description="紅血球")#
     fattyliver: str =Field(...,description="脂肪肝:無、不知道、有")#
     hdl:float =Field(...,description="高密度脂蛋白膽固醇")#
 
@@ -74,11 +72,8 @@ def preprocess_data(data: PredictionData):
         data.triglyceride,
         data.bun,
         data.hermatin,
-        data.hct,
-        data.weight,
         fattyliver_mapping.get(data.fattyliver, -1),  # 預設-1表示無效數據
         data.alt,
-        data.rbc,
         data.hdl
     ]
     return [processed_features],bmi  # 轉為 2D 陣列，符合模型輸入格式

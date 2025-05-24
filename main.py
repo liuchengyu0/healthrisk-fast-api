@@ -39,9 +39,10 @@ class PredictionData(BaseModel):
     triglyceride: float  =Field(...,description="三酸甘油脂(mg/dL)")# 三酸甘油脂
     bun: float  =Field(...,description="尿素氮(mg/dl)")# 尿素氮
     hermatin:float =Field(...,description="血色素(g/dL)")#血色素
-    alt:float =Field(...,description="麩氨酸丙酮酸轉氨基酵素")#麩氨酸丙酮酸轉氨基酵素
-    fattyliver: str =Field(...,description="脂肪肝:無、不知道、有")#
-    hdl:float =Field(...,description="高密度脂蛋白膽固醇")#
+    hct:float =Field(...,description="血球比容")#血色素
+    #alt:float =Field(...,description="麩氨酸丙酮酸轉氨基酵素")#麩氨酸丙酮酸轉氨基酵素
+    #fattyliver: str =Field(...,description="脂肪肝:無、不知道、有")#
+    #hdl:float =Field(...,description="高密度脂蛋白膽固醇")#
 
 # 手動處理 OPTIONS 請求
 @app.options("/predict")
@@ -56,7 +57,7 @@ async def root():
 # 類別數據轉換函數
 def preprocess_data(data: PredictionData):
     gender_mapping = {"女": 0, "男": 1}
-    fattyliver_mapping = {"無": 0, "不知道":0,"有": 1}
+    #fattyliver_mapping = {"無": 0, "不知道":0,"有": 1}
 
     # 計算 BMI
     height_m = data.height / 100
@@ -66,15 +67,17 @@ def preprocess_data(data: PredictionData):
         gender_mapping.get(data.gender, -1),  # 預設-1表示無效數據
         data.age,
         bmi,
+        data.weight,
         data.bloodsugar,
         data.rgt,
         data.waist,
         data.triglyceride,
         data.bun,
         data.hermatin,
-        fattyliver_mapping.get(data.fattyliver, -1),  # 預設-1表示無效數據
-        data.alt,
-        data.hdl
+        data.hct,
+        #fattyliver_mapping.get(data.fattyliver, -1),  # 預設-1表示無效數據
+        #data.alt,
+        #data.hdl
     ]
     return [processed_features],bmi  # 轉為 2D 陣列，符合模型輸入格式
 

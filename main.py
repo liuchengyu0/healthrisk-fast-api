@@ -40,9 +40,10 @@ class PredictionData(BaseModel):
     bun: float  =Field(...,description="尿素氮(mg/dl)")# 尿素氮
     hermatin:float =Field(...,description="血色素(g/dL)")#血色素
     hct:float =Field(...,description="血球比容")#血色素
-    #alt:float =Field(...,description="麩氨酸丙酮酸轉氨基酵素")#麩氨酸丙酮酸轉氨基酵素
-    #fattyliver: str =Field(...,description="脂肪肝:無、不知道、有")#
-    #hdl:float =Field(...,description="高密度脂蛋白膽固醇")#
+    alt:float =Field(...,description="麩氨酸丙酮酸轉氨基酵素")#麩氨酸丙酮酸轉氨基酵素
+    fattyliver: str =Field(...,description="脂肪肝:無、不知道、有")#脂肪肝
+    hdl:float =Field(...,description="高密度脂蛋白膽固醇")#高密度脂蛋白膽固醇
+    rbc:float =Field(...,description="紅血球")#紅血球
 
 # 手動處理 OPTIONS 請求
 @app.options("/predict")
@@ -57,7 +58,7 @@ async def root():
 # 類別數據轉換函數
 def preprocess_data(data: PredictionData):
     gender_mapping = {"女": 0, "男": 1}
-    #fattyliver_mapping = {"無": 0, "不知道":0,"有": 1}
+    fattyliver_mapping = {"無": 0, "不知道":0,"有": 1}
 
     # 計算 BMI
     height_m = data.height / 100
@@ -75,9 +76,10 @@ def preprocess_data(data: PredictionData):
         data.bun,
         data.hermatin,
         data.hct,
-        #fattyliver_mapping.get(data.fattyliver, -1),  # 預設-1表示無效數據
-        #data.alt,
-        #data.hdl
+        fattyliver_mapping.get(data.fattyliver, -1),  # 預設-1表示無效數據
+        data.alt,
+        data.hdl,
+        data.rbc
     ]
     return [processed_features],bmi  # 轉為 2D 陣列，符合模型輸入格式
 
